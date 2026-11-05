@@ -1,0 +1,36 @@
+TTTRAINER / FocusLock - EMERGENCY EXIT
+======================================
+
+Only use this in a real emergency (e.g. you absolutely need a blocked site for
+work/school and cannot wait for the break). The normal way:
+  During break hours (11:00-12:00 or 23:00-00:00) open TTTRAINER and right-click START.
+
+The FocusLock service does not run in Safe Mode, so you can remove it from there:
+
+1. Boot into Safe Mode:
+   Start > Power > hold SHIFT and click "Restart"
+   > Troubleshoot > Advanced options > Startup Settings > Restart
+   > 4 (Enable Safe Mode)
+
+2. Open Command Prompt as Administrator and run, in order:
+
+   reg delete HKLM\SYSTEM\CurrentControlSet\Services\FocusLock /f
+   takeown /F C:\ProgramData\FocusLock /A /R
+   icacls C:\ProgramData\FocusLock /reset /T /C /Q
+   rmdir /S /Q C:\ProgramData\FocusLock
+   notepad C:\Windows\System32\drivers\etc\hosts
+
+3. In the hosts file that opens, delete every line between
+      # >>> FocusLock BEGIN ...
+   and
+      # <<< FocusLock END
+   (including those two lines) and save.
+
+4. Optionally remove the browser "secure DNS" restriction as well:
+
+   reg delete HKLM\SOFTWARE\Policies\Google\Chrome /v DnsOverHttpsMode /f
+   reg delete HKLM\SOFTWARE\Policies\Microsoft\Edge /v DnsOverHttpsMode /f
+   reg delete HKLM\SOFTWARE\Policies\BraveSoftware\Brave /v DnsOverHttpsMode /f
+   reg delete HKLM\SOFTWARE\Policies\Mozilla\Firefox\DNSOverHTTPS /f
+
+5. Restart normally. FocusLock is now completely removed.

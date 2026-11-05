@@ -1,0 +1,6 @@
+# Build output is not kept in the repo; the exe is published as a GitHub Release.
+*.exe
+*.pdb
+
+# Personal ASCII art (may be copied from other sites, not committed)
+sahur.txt
