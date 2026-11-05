@@ -1,7 +1,7 @@
 # TTTRAINER
 
-A distracting-site blocker for Windows. It blocks sites **24/7** and only takes a break every day
-from **11:00–12:00** and **23:00–00:00**. It has a small terminal-style UI in PowerShell colors.
+A distracting-site blocker for Windows. It blocks sites **24/7** and only takes two 10-minute breaks
+every day: **11:00–11:10** and **23:00–23:10**. It has a small terminal-style UI in PowerShell colors.
 
 ## How it works
 

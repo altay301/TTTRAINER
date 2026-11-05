@@ -3,7 +3,7 @@ TTTRAINER / FocusLock - EMERGENCY EXIT
 
 Only use this in a real emergency (e.g. you absolutely need a blocked site for
 work/school and cannot wait for the break). The normal way:
-  During break hours (11:00-12:00 or 23:00-00:00) open TTTRAINER and right-click START.
+  During a break (11:00-11:10 or 23:00-23:10) open TTTRAINER and right-click START.
 
 The FocusLock service does not run in Safe Mode, so you can remove it from there:
 

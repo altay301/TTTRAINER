@@ -8,7 +8,7 @@
 //   UI <-> service           -> \\.\pipe\FocusLockPipe (Administrators/SYSTEM only)
 //
 // Rules:
-//   - Break hours: 11:00-12:00 and 23:00-00:00 every day (local time).
+//   - Breaks: 11:00-11:10 and 23:00-23:10 every day (local time).
 //   - Adding sites is always allowed. Removing sites and uninstalling only during breaks.
 //   - Service permissions: Administrators cannot stop/delete/reconfigure the service without
 //     first changing its permissions. An emergency exit always exists: EMERGENCY-EXIT.txt (Safe Mode).
@@ -56,7 +56,7 @@ public static class Lock
     const string ServiceSddl =
         "D:(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;SY)(A;;CCLCSWRPLOCRRCWD;;;BA)(A;;CCLCSWLOCRRC;;;IU)(A;;CCLCSWLOCRRC;;;SU)";
 
-    public static readonly string[] DefaultBreaks = { "11:00-12:00", "23:00-00:00" };
+    public static readonly string[] DefaultBreaks = { "11:00-11:10", "23:00-23:10" };
 
     public static readonly string[] DefaultSites = {
         "youtube.com", "youtu.be", "instagram.com", "tiktok.com", "twitter.com", "x.com",
