@@ -8,7 +8,7 @@
 //   UI <-> service           -> \\.\pipe\FocusLockPipe (Administrators/SYSTEM only)
 //
 // Rules:
-//   - Breaks: 11:00-11:10 and 23:00-23:10 every day (local time).
+//   - Breaks: the first 10 minutes of every hour (07:00-07:10, 08:00-08:10, ...; local time).
 //   - Adding sites is always allowed. Removing sites and uninstalling only during breaks.
 //   - Service permissions: Administrators cannot stop/delete/reconfigure the service without
 //     first changing its permissions. An emergency exit always exists: EMERGENCY-EXIT.txt (Safe Mode).
@@ -56,7 +56,9 @@ public static class Lock
     const string ServiceSddl =
         "D:(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;SY)(A;;CCLCSWRPLOCRRCWD;;;BA)(A;;CCLCSWLOCRRC;;;IU)(A;;CCLCSWLOCRRC;;;SU)";
 
-    public static readonly string[] DefaultBreaks = { "11:00-11:10", "23:00-23:10" };
+    // A 10-minute break at the top of every hour: 00:00-00:10, 01:00-01:10, ... 23:00-23:10
+    public static readonly string[] DefaultBreaks = Enumerable.Range(0, 24)
+        .Select(h => string.Format("{0:00}:00-{0:00}:10", h)).ToArray();
 
     public static readonly string[] DefaultSites = {
         "youtube.com", "youtu.be", "instagram.com", "tiktok.com", "twitter.com", "x.com",
@@ -142,6 +144,8 @@ public static class Lock
 
     public static string BreaksText(LockState st)
     {
+        if (st.Breaks.Count == DefaultBreaks.Length && DefaultBreaks.All(st.Breaks.Contains))
+            return "the first 10 minutes of every hour (07:00–07:10, 08:00–08:10, ...)";
         return string.Join(", ", st.Breaks.Select(b => b.Replace("-", "–")));
     }
 
