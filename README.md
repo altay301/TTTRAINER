@@ -11,6 +11,9 @@ at the top of every hour: **07:00–07:10**, **08:00–08:10**, and so on, aroun
   - If you delete the block from the `hosts` file, it writes it back within 5 seconds.
   - Restarting the computer does not lift the block.
   - During break hours it lifts the block by itself and puts it back when the break ends.
+  - When a break ends it closes open browsers (Chrome, Edge, Firefox, Brave, Opera, Vivaldi),
+    so a video or feed opened during the break does not keep running. Browsers offer to restore
+    the tabs on next start; blocked sites simply won't load.
 - The service permissions are locked down: even an administrator account cannot stop or delete it directly.
 - **Adding sites** is always allowed. **Removing sites** and **uninstalling TTTRAINER** only work during break hours.
 

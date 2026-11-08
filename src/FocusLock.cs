@@ -9,6 +9,7 @@
 //
 // Rules:
 //   - Breaks: the first 10 minutes of every hour (07:00-07:10, 08:00-08:10, ...; local time).
+//   - When a break ends, open browsers are closed so tabs from the break do not keep running.
 //   - Adding sites is always allowed. Removing sites and uninstalling only during breaks.
 //   - Service permissions: Administrators cannot stop/delete/reconfigure the service without
 //     first changing its permissions. An emergency exit always exists: EMERGENCY-EXIT.txt (Safe Mode).
@@ -266,6 +267,33 @@ public static class Lock
 
     static void FlushDns() { string o; try { Run("ipconfig.exe", "/flushdns", out o); } catch { } }
 
+    static readonly string[] BrowserProcesses = { "chrome", "msedge", "firefox", "brave", "opera", "vivaldi" };
+    public static readonly string EventLog = Path.Combine(Dir, "events.log");
+
+    /// Closes every open browser so tabs opened during a break do not keep running after it.
+    /// Browsers offer to restore the tabs on next start; blocked sites stay blocked.
+    public static int CloseBrowsers()
+    {
+        int closed = 0;
+        foreach (var name in BrowserProcesses)
+            foreach (var p in Process.GetProcessesByName(name))
+            {
+                try { p.Kill(); closed++; } catch { }
+                finally { p.Dispose(); }
+            }
+        return closed;
+    }
+
+    public static void Log(string line)
+    {
+        try
+        {
+            if (File.Exists(EventLog) && new FileInfo(EventLog).Length > 100 * 1024) File.Delete(EventLog);
+            File.AppendAllText(EventLog, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "  " + line + Environment.NewLine);
+        }
+        catch { }
+    }
+
     public static bool ServiceInstalled()
     {
         try { using (var sc = new ServiceController(ServiceName)) { var s = sc.Status; return true; } }
@@ -412,18 +440,26 @@ public class FocusService : ServiceBase
 
     void Loop()
     {
+        bool? lastBreak = null; // unknown right after the service starts: never close browsers on startup
         while (!stopping)
         {
-            bool finished = false;
+            bool finished = false, breakEnded = false;
             try
             {
                 lock (sync)
                 {
                     if (state == null || uninstallRequested) finished = true;
-                    else Lock.ApplyState(state, Lock.InBreak(state, DateTime.Now));
+                    else
+                    {
+                        bool inBreak = Lock.InBreak(state, DateTime.Now);
+                        Lock.ApplyState(state, inBreak); // block is back in hosts before browsers close
+                        breakEnded = lastBreak == true && !inBreak;
+                        lastBreak = inBreak;
+                    }
                 }
             }
             catch { }
+            if (breakEnded) Lock.Log("break ended, closed " + Lock.CloseBrowsers() + " browser processes");
             if (finished)
             {
                 Lock.Finish();
